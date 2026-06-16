@@ -1,0 +1,6 @@
+{
+  "name": "LoveReply AI",
+  "description": "Générateur de réponses de flirt, amour, mignonnes et drôles via IA basé sur des captures d'écran ou messages",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
