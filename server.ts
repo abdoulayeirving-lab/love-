@@ -14,16 +14,21 @@ const PORT = 3000;
 app.use(express.json({ limit: "15mb" }));
 app.use(express.urlencoded({ limit: "15mb", extended: true }));
 
-// Initialize GenAI
-const apiKey = process.env.GEMINI_API_KEY;
-const ai = new GoogleGenAI({
-  apiKey: apiKey || "",
-  httpOptions: {
-    headers: {
-      "User-Agent": "aistudio-build",
+// Function to lazy-initialize the GoogleGenAI client
+function getGeminiClient() {
+  const currentKey = process.env.GEMINI_API_KEY;
+  if (!currentKey) {
+    throw new Error("GEMINI_API_KEY is not defined");
+  }
+  return new GoogleGenAI({
+    apiKey: currentKey,
+    httpOptions: {
+      headers: {
+        "User-Agent": "aistudio-build",
+      },
     },
-  },
-});
+  });
+}
 
 // Helper to convert base64 image data into Gemini format
 function getPartFromBase64Image(base64String: string) {
@@ -51,7 +56,7 @@ app.post("/api/love-reply/generate", async (req, res) => {
   try {
     const { text, image, booster } = req.body;
 
-    if (!apiKey) {
+    if (!process.env.GEMINI_API_KEY) {
       console.warn("GEMINI_API_KEY is not defined in environment variables.");
       return res.status(500).json({
         error: "Le serveur n'a pas configuré la clé API Gemini. Veuillez la renseigner dans les secrets.",
@@ -122,6 +127,7 @@ Respecte rigoureusement la structure de schéma JSON demandée. Le texte de 'con
 
     console.log("Appel de l'API de Gemini pour LoveReply AI (modèle gemini-3.5-flash)...");
 
+    const ai = getGeminiClient();
     const response = await ai.models.generateContent({
       model: "gemini-3.5-flash",
       contents: { parts: parts },
