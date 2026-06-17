@@ -40,7 +40,7 @@ export default function ManualInput({ text, onChange }: ManualInputProps) {
           maxLength={1000}
           className="w-full rounded-2xl bg-black/40 border border-white/10 px-4 py-3.5 text-sm text-gray-200 placeholder-gray-600 focus:outline-none focus:border-rose-500/50 focus:ring-1 focus:ring-rose-500/20 transition-all resize-none"
         />
-        <div className="absolute bottom-3 right-3 text-[10px] font-mono text-gray-650">
+        <div className="absolute bottom-3 right-3 text-[10px] font-mono text-gray-500">
           {text.length}/1000
         </div>
       </div>

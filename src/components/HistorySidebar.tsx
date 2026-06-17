@@ -89,7 +89,7 @@ export default function HistorySidebar({ history, onSelect, onClear, activeId }:
                 </div>
               </div>
 
-              <ChevronRight size={14} className={isActive ? "text-rose-400" : "text-gray-655"} />
+              <ChevronRight size={14} className={isActive ? "text-rose-400" : "text-gray-500"} />
             </motion.button>
           );
         })}
