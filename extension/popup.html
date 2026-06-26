@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>LoveReply AI</title>
+  <style>
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background-color: #090D16;
+      color: #F3F4F6;
+      width: 320px;
+      padding: 16px;
+      margin: 0;
+      text-align: center;
+    }
+    .popup-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo {
+      font-size: 32px;
+      margin: 4px 0;
+      filter: drop-shadow(0 0 8px rgba(233, 30, 99, 0.4));
+    }
+    h1 {
+      font-size: 18px;
+      font-weight: 800;
+      margin: 0;
+    }
+    .accent {
+      color: #E91E63;
+    }
+    p {
+      font-size: 12px;
+      color: #9CA3AF;
+      line-height: 1.5;
+      margin: 0 0 8px 0;
+    }
+    .btn {
+      background-color: #E91E63;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      width: 100%;
+      box-shadow: 0 4px 10px rgba(233, 30, 99, 0.25);
+      transition: background-color 0.2s, transform 0.1s;
+    }
+    .btn:hover {
+      background-color: #D81B60;
+    }
+    .btn:active {
+      transform: scale(0.98);
+    }
+    .instructions {
+      text-align: left;
+      background-color: #111726;
+      border: 1px solid #202A41;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 11px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .instructions h2 {
+      font-size: 11px;
+      font-weight: 700;
+      margin-top: 0;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      color: #9CA3AF;
+      letter-spacing: 0.5px;
+    }
+    .instructions ol {
+      margin: 0;
+      padding-left: 16px;
+      color: #9CA3AF;
+    }
+    .instructions li {
+      margin-bottom: 4px;
+    }
+    .footer {
+      font-size: 9px;
+      color: #6B7280;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="popup-container">
+    <div class="logo">💘</div>
+    <h1>LoveReply <span class="accent">AI</span></h1>
+    <p>Ouvrez automatiquement le panneau latéral sur WhatsApp Web pour analyser vos conversations en temps réel.</p>
+    
+    <button id="open-panel-btn" class="btn">📱 Ouvrir le Panneau Latéral</button>
+    
+    <div class="instructions">
+      <h2>Comment utiliser l'assistant :</h2>
+      <ol>
+        <li>Ouvrez <b>web.whatsapp.com</b> dans votre navigateur.</li>
+        <li>Ouvrez n'importe quelle discussion active.</li>
+        <li>Cliquez sur <b>"Ouvrir le Panneau Latéral"</b> ci-dessus pour afficher l'analyse et générer des suggestions de réponses en 1 clic.</li>
+      </ol>
+    </div>
+    
+    <div class="footer">LoveReply AI &copy; 2026 • Propulsé par Gemini 3.5 Flash</div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

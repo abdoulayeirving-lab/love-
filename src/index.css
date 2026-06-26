@@ -1,7 +1,204 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
+:root {
+  --bg-app: #faf8fd;
+  --bg-card: rgba(255, 255, 255, 0.75);
+  --bg-nav: rgba(250, 248, 253, 0.85);
+  --border-main: rgba(0, 0, 0, 0.08);
+  --text-main: #120e1c;
+  --text-muted: #5c556b;
+  --bg-btn-sec: rgba(0, 0, 0, 0.04);
+  --text-btn-sec: #272136;
+}
+
+:root.dark {
+  --bg-app: #060307;
+  --bg-card: rgba(255, 255, 255, 0.03);
+  --bg-nav: rgba(6, 3, 7, 0.85);
+  --border-main: rgba(255, 255, 255, 0.1);
+  --text-main: #ffffff;
+  --text-muted: #9ca3af;
+  --bg-btn-sec: rgba(255, 255, 255, 0.05);
+  --text-btn-sec: #d1d5db;
+}
+
 @theme {
   --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-bg-app: var(--bg-app);
+  --color-bg-card: var(--bg-card);
+  --color-bg-nav: var(--bg-nav);
+  --color-border-main: var(--border-main);
+  --color-text-main: var(--text-main);
+  --color-text-muted: var(--text-muted);
+  --color-bg-btn-sec: var(--bg-btn-sec);
+  --color-text-btn-sec: var(--text-btn-sec);
 }
+
+/* ----------------------------------------------------
+   ADVANCED AGENCY-LEVEL CUSTOM STYLING & ANIMATIONS
+   ---------------------------------------------------- */
+
+/* Register custom property for smooth GPU-accelerated gradient rotations */
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes rotate-gradient {
+  0% {
+    --angle: 0deg;
+  }
+  100% {
+    --angle: 360deg;
+  }
+}
+
+/* Custom fine scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 99px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #be3a8a, #6025d4);
+  border-radius: 99px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #be3a8a;
+}
+
+/* Shimmer animation for premiums and loaders */
+@keyframes shimmer-move {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer-fast {
+  animation: shimmer-move 1.5s infinite linear;
+}
+
+/* Pulse Glow button keyframe */
+@keyframes pulse-glow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(190, 58, 138, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 14px rgba(190, 58, 138, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(190, 58, 138, 0);
+  }
+}
+
+.animate-pulse-glow-rose {
+  animation: pulse-glow 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+/* Orbital rotation for loading state */
+@keyframes orbit-cw {
+  0% {
+    transform: rotate(0deg) translateX(32px) rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg) translateX(32px) rotate(-360deg);
+  }
+}
+
+@keyframes orbit-ccw {
+  0% {
+    transform: rotate(360deg) translateX(48px) rotate(-360deg);
+  }
+  100% {
+    transform: rotate(0deg) translateX(48px) rotate(0deg);
+  }
+}
+
+.animate-orbit-1 {
+  animation: orbit-cw 3s infinite linear;
+}
+
+.animate-orbit-2 {
+  animation: orbit-ccw 4s infinite linear;
+}
+
+.animate-orbit-3 {
+  animation: orbit-cw 5s infinite linear;
+}
+
+/* Keypress particle burst effect */
+@keyframes particle-fade-out {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--x), var(--y)) scale(0.2);
+    opacity: 0;
+  }
+}
+
+.animate-key-particle {
+  animation: particle-fade-out 0.6s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+}
+
+/* Micro confetti copy effect */
+@keyframes confetti-pop {
+  0% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--cx), var(--cy)) scale(0.4) rotate(var(--crot));
+    opacity: 0;
+  }
+}
+
+.animate-confetti-particle {
+  animation: confetti-pop 0.8s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+}
+
+/* Global focus-visible styling for excellent keyboard accessibility */
+*:focus-visible {
+  outline: 2px solid #ec4899 !important;
+  outline-offset: 3px !important;
+}
+
+/* Touch targets and mobile scroll precision */
+html, body {
+  overscroll-behavior-y: auto; /* Allow scrolling naturally, but avoid body bouncing when pulling empty spaces */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Respect user's system preferences for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-delay: -1ms !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    background-attachment: initial !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
+  }
+  .animate-shimmer-fast, 
+  .animate-pulse-glow-rose, 
+  .animate-orbit-1, 
+  .animate-orbit-2, 
+  .animate-orbit-3, 
+  .animate-key-particle, 
+  .animate-confetti-particle {
+    animation: none !important;
+  }
+}
+

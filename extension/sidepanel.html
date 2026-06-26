@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>LoveReply AI - Assistant WhatsApp</title>
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header Section -->
+    <header class="app-header">
+      <div class="logo-area">
+        <span class="logo-heart">💘</span>
+        <div class="logo-text">
+          <h1>LoveReply <span class="accent-text">AI</span></h1>
+          <p class="subtitle">Assistant WhatsApp Web</p>
+        </div>
+      </div>
+      <div class="connection-status" id="connection-badge">
+        <span class="status-dot"></span>
+        <span class="status-label">Attente WhatsApp...</span>
+      </div>
+    </header>
+
+    <!-- Main Scrollable Content -->
+    <main class="app-content">
+      
+      <!-- Section 1: Active Chat Info -->
+      <section class="section card active-chat-section">
+        <div class="section-title">
+          <span class="icon">💬</span>
+          <h2>Chat Détecté</h2>
+        </div>
+        <div class="chat-info-box">
+          <div class="contact-avatar">👤</div>
+          <div class="contact-details">
+            <h3 id="contact-name">Aucune conversation ouverte</h3>
+            <p id="chat-status" class="sub-info">Ouvrez une discussion sur WhatsApp Web pour commencer</p>
+          </div>
+          <button id="refresh-chat-btn" class="icon-btn" title="Actualiser la conversation">🔄</button>
+        </div>
+      </section>
+
+      <!-- Section 2: Conversation Preview -->
+      <section class="section card conversation-preview-section">
+        <div class="section-title-with-badge">
+          <div class="section-title">
+            <span class="icon">📜</span>
+            <h2>Derniers messages lus</h2>
+          </div>
+          <span id="msg-count-badge" class="badge">0</span>
+        </div>
+        <div id="messages-container" class="messages-preview-box">
+          <div class="empty-state">
+            Le fil de discussion s'affichera ici dès que vous sélectionnerez un chat sur WhatsApp Web.
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: Booster Selection -->
+      <section class="section card booster-section">
+        <div class="section-title">
+          <span class="icon">⚡</span>
+          <h2>Mode Booster</h2>
+        </div>
+        <div class="booster-grid">
+          <button class="booster-btn active" data-mode="none" title="Réponse standard équilibrée">
+            <span class="emoji">🎯</span> Standard
+          </button>
+          <button class="booster-btn" data-mode="ultra_drague" title="Flirt intense et séduction brute">
+            <span class="emoji">🔥</span> Drague
+          </button>
+          <button class="booster-btn" data-mode="ultra_mignon" title="Complice, doux et romantique">
+            <span class="emoji">🥰</span> Mignon
+          </button>
+          <button class="booster-btn" data-mode="funny" title="Humour, vannes et dérision">
+            <span class="emoji">😂</span> Funny
+          </button>
+          <button class="booster-btn" data-mode="ice_cold" title="Art du fuis-moi je te suis">
+            <span class="emoji">😎</span> Ice Cold
+          </button>
+        </div>
+      </section>
+
+      <!-- Action Area -->
+      <div class="action-bar">
+        <button id="generate-replies-btn" class="primary-btn">
+          <span class="btn-emoji">✨</span> Générer des Réponses
+        </button>
+      </div>
+
+      <!-- Loading State -->
+      <div id="loading-spinner" class="loading-container hidden">
+        <div class="spinner-box">
+          <div class="spinner-ring"></div>
+          <span class="heart-pulse">💖</span>
+        </div>
+        <p class="loading-text">Analyse de la conversation...</p>
+        <p class="loading-sub">Sélection de l'attitude idéale avec Gemini AI</p>
+      </div>
+
+      <!-- Section 4: Results Area -->
+      <div id="results-area" class="results-container hidden">
+        
+        <!-- Analysis Panel -->
+        <section class="section card analysis-panel">
+          <div class="section-title">
+            <span class="icon">🧠</span>
+            <h2>Analyse Psychologique</h2>
+          </div>
+          <div class="analysis-grid">
+            <div class="analysis-item">
+              <span class="label">Ton émotionnel :</span>
+              <span id="detected-tone" class="value text-highlight">-</span>
+            </div>
+            <div class="analysis-item">
+              <span class="label">Intention probable :</span>
+              <span id="detected-intention" class="value">-</span>
+            </div>
+            <div class="analysis-item">
+              <span class="label">Niveau d'intérêt :</span>
+              <span id="interest-badge" class="badge-interest">-</span>
+            </div>
+          </div>
+          <div class="advice-box">
+            <span class="advice-icon">💡</span>
+            <p id="detected-advice" class="advice-text">-</p>
+          </div>
+        </section>
+
+        <!-- Suggested Replies List -->
+        <section class="replies-section">
+          <div class="section-title">
+            <span class="icon">💬</span>
+            <h2>Réponses Proposées</h2>
+          </div>
+          <div id="replies-container" class="replies-list">
+            <!-- Dynamic reply cards go here -->
+          </div>
+        </section>
+
+      </div>
+
+    </main>
+
+    <!-- Footer Settings Info -->
+    <footer class="app-footer">
+      <p>LoveReply AI &copy; 2026 • Propulsé par Gemini 3.5 Flash</p>
+    </footer>
+  </div>
+</body>
+</html>

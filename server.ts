@@ -3,6 +3,7 @@ import path from "path";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI, Type } from "@google/genai";
 import dotenv from "dotenv";
+import Stripe from "stripe";
 
 // Load environment variables
 dotenv.config();
@@ -58,8 +59,8 @@ app.post("/api/love-reply/generate", async (req, res) => {
 
     if (!process.env.GEMINI_API_KEY) {
       console.warn("GEMINI_API_KEY is not defined in environment variables.");
-      return res.status(500).json({
-        error: "Le serveur n'a pas configuré la clé API Gemini. Veuillez la renseigner dans les secrets.",
+      return res.status(401).json({
+        error: "Erreur de configuration, contactez le support.",
       });
     }
 
@@ -102,6 +103,7 @@ Directives de génération :
    - "funny" : Une réplique ou vanne extrêmement drôle, dynamique et inattendue 😂
    - "ice_cold" : Une réplique mystérieuse, un peu détachée, très charismatique, l'art du "fuis-moi je te suis" 😎
    Si "${booster}" est "none", tu n'es pas obligé de rajouter de 5ème option, mais tu peux en option proposer une variante bonus sympa.
+6. Pour chaque réponse proposée, analyse son sentiment dominant ("positive" pour romantique/doux/complice/flirt, "neutral" pour purement informatif/détaché/amical sans sous-entendus, "negative" pour piquant/sarcastique/volontairement distant/froid en guise de taquinerie ou repli stratégique). Attribue également un score d'intensité sentimentale/émotionnelle de 0 à 100 indiquant à quel point la réponse incarne ce sentiment.
 
 Format de sortie STRICTEMENT en JSON :
 Respecte rigoureusement la structure de schéma JSON demandée. Le texte de 'content' doit directement être le message à copier-coller (ne mets pas de guillemets à l'intérieur s'ils ne sont pas nécessaires).`;
@@ -170,8 +172,16 @@ Respecte rigoureusement la structure de schéma JSON demandée. Le texte de 'con
                     type: Type.STRING,
                     description: "Court conseil d'attitude ou explication de pourquoi cela marche (max 10 mots en français)",
                   },
+                  sentiment: {
+                    type: Type.STRING,
+                    description: "Sentiment dominant de la réponse générée : 'positive', 'neutral' ou 'negative'",
+                  },
+                  sentimentScore: {
+                    type: Type.INTEGER,
+                    description: "Intensité sentimentale/émotionnelle de la réponse de 0 à 100",
+                  },
                 },
-                required: ["category", "label", "content", "explanation"],
+                required: ["category", "label", "content", "explanation", "sentiment", "sentimentScore"],
               },
             },
           },
@@ -190,9 +200,91 @@ Respecte rigoureusement la structure de schéma JSON demandée. Le texte de 'con
 
   } catch (error: any) {
     console.error("Erreur durant la génération des réponses:", error);
-    return res.status(500).json({
-      error: "Une erreur est survenue lors du traitement par l'IA.",
-      details: error?.message || error,
+    const errMessage = (error?.message || "").toString();
+    
+    let status = 500;
+    let errorMessage = "Une petite erreur s'est glissée. On réessaie ? ✨";
+
+    if (errMessage.includes("API_KEY_INVALID") || errMessage.includes("API key not valid") || errMessage.includes("key is invalid") || error?.status === 401) {
+      status = 401;
+      errorMessage = "Erreur de configuration, contactez le support.";
+    } else if (errMessage.includes("RESOURCE_EXHAUSTED") || errMessage.includes("quota") || errMessage.includes("Too Many Requests") || error?.status === 429) {
+      status = 429;
+      errorMessage = "Trop de requêtes, patientez quelques secondes.";
+    } else if (errMessage.includes("unavailable") || errMessage.includes("down") || errMessage.includes("Service Unavailable") || error?.status === 503) {
+      status = 503;
+      errorMessage = "Service temporairement indisponible, réessayez dans 30 secondes.";
+    }
+
+    return res.status(status).json({
+      error: errorMessage,
+      details: errMessage,
+    });
+  }
+});
+
+// API endpoints for Stripe Payments
+app.get("/api/stripe/config", (req, res) => {
+  res.json({
+    isConfigured: !!process.env.STRIPE_SECRET_KEY,
+  });
+});
+
+app.post("/api/stripe/create-checkout-session", async (req, res) => {
+  try {
+    const { planId } = req.body;
+    const stripeKey = process.env.STRIPE_SECRET_KEY;
+    
+    if (!stripeKey) {
+      return res.status(400).json({
+        error: "Stripe n'est pas configuré sur le serveur. Veuillez ajouter STRIPE_SECRET_KEY dans les variables d'environnement.",
+      });
+    }
+
+    const stripe = new Stripe(stripeKey, {
+      apiVersion: "2023-10-16" as any,
+    });
+
+    let planName = "LoveReply Starter";
+    let planPriceCents = 299; // 2.99 €
+    let planDescription = "Abonnement Starter - 50 générations de réponses par jour";
+
+    if (planId === "premium") {
+      planName = "LoveReply Premium";
+      planPriceCents = 699; // 6.99 €
+      planDescription = "Abonnement Premium - Réponses et scans illimités ♾️";
+    }
+
+    // Build checkout session configuration supporting Cards, Link, Apple Pay, Google Pay, and other standard payment methods automatically via Stripe
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card", "link"],
+      line_items: [
+        {
+          price_data: {
+            currency: "eur",
+            product_data: {
+              name: planName,
+              description: planDescription,
+            },
+            unit_amount: planPriceCents,
+            recurring: {
+              interval: "month",
+            },
+          },
+          quantity: 1,
+        },
+      ],
+      mode: "subscription",
+      success_url: `${req.headers.origin || "http://localhost:3000"}/?status=success&plan=${planId}`,
+      cancel_url: `${req.headers.origin || "http://localhost:3000"}/?status=cancel`,
+    });
+
+    res.json({ id: session.id, url: session.url });
+  } catch (err: any) {
+    console.error("Erreur de création de session Stripe:", err);
+    res.status(500).json({
+      error: "Impossible de créer la session de paiement Stripe.",
+      details: err.message,
     });
   }
 });
